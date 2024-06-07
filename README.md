@@ -1,80 +1,62 @@
 ## Descripción del Proyecto
 
-Este proyecto tiene como objetivo desplegar una infraestructura de monitoreo utilizando Prometheus y Grafana en un clúster de Kubernetes gestionado por Minikube en una instancia EC2. A continuación se detallan los pasos necesarios para desplegar la solución completa.
+Este proyecto tiene como objetivo desplegar una infraestructura de monitoreo utilizando Prometheus y Grafana en un clúster de Kubernetes gestionado por Minikube en una máquina local. A continuación se detallan los pasos necesarios para desplegar la solución completa.
 
 ## Requisitos
 
-- **Cuenta de AWS**: Necesitas una cuenta de AWS para crear y gestionar recursos en la nube.
-- **Clave SSH**: Para acceder a la instancia EC2.
-- **Conexión a Internet**: Para descargar dependencias y contenedores Docker.
+- **Minikube**: Herramienta para correr un clúster de Kubernetes localmente.
+- **kubectl**: Herramienta de línea de comandos para interactuar con el clúster de Kubernetes.
+- **Docker**: Plataforma para desarrollar, enviar y ejecutar aplicaciones en contenedores.
 
 ## Instrucciones
 
-### Paso 1: Crear la Infraestructura
+### Paso 1: Instalar Dependencias
 
-1. **Crear una instancia EC2**
-
-   - **Tipo de instancia**: `t3.small`
-   - **AMI**: `Amazon Linux 1`
-
-   Durante la creación de la instancia, asegúrate de:
-
-   - **Crear una clave en la sección “par de claves”** y descargarla para acceder a la instancia vía SSH.
-   - **Configurar el grupo de seguridad** añadiendo las siguientes reglas de entrada:
-     - Puerto 3000 (TCP) para Grafana.
-     - Puerto 9090 (TCP) para Prometheus.
-
-### Paso 2: Instalar Dependencias
-
-Accede a la instancia EC2 vía SSH utilizando la clave descargada:
-
-```sh
-ssh -i "your-key.pem" ec2-user@your-ec2-public-dns
-```
-
-1. **Actualizar librerías**
-
-   ```sh
-   sudo yum update -y
-   ```
-
-   Este comando actualiza todas las librerías del sistema a sus últimas versiones.
-
-2. **Instalar Docker**
-
-   ```sh
-   sudo yum install -y docker
-   sudo service docker start
-   sudo usermod -a -G docker $(whoami)
-   ```
-
-   - `sudo yum install -y docker`: Instala Docker.
-   - `sudo service docker start`: Inicia el servicio Docker.
-   - `sudo usermod -a -G docker $(whoami)`: Añade el usuario actual al grupo Docker para ejecutar comandos Docker sin `sudo`.
-
-3. **Instalar Minikube y kubectl**
+1. **Instalar Minikube**
 
    ```sh
    curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
    sudo install minikube-linux-amd64 /usr/local/bin/minikube
+   ```
 
+   - `curl -LO`: Descarga el binario de Minikube.
+   - `sudo install`: Instala Minikube en `/usr/local/bin`.
+
+2. **Instalar kubectl**
+
+   ```sh
    curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
    chmod +x ./kubectl
    sudo mv ./kubectl /usr/local/bin/kubectl
    ```
 
-   - `curl -LO`: Descarga los binarios de Minikube y kubectl.
-   - `sudo install`: Instala Minikube en `/usr/local/bin`.
+   - `curl -LO`: Descarga el binario de kubectl.
    - `chmod +x ./kubectl`: Da permisos de ejecución al binario `kubectl`.
    - `sudo mv ./kubectl /usr/local/bin/kubectl`: Mueve `kubectl` al directorio de binarios del sistema.
 
-4. **Iniciar Minikube**
+3. **Instalar Docker**
 
    ```sh
-   minikube start --driver=none
+   sudo apt-get update
+   sudo apt-get install -y docker.io
+   sudo usermod -aG docker $USER
+   newgrp docker
    ```
 
-   Este comando inicia un clúster de Minikube utilizando el driver `none`, que es adecuado para entornos de servidor.
+   - `sudo apt-get update`: Actualiza el índice de paquetes.
+   - `sudo apt-get install -y docker.io`: Instala Docker.
+   - `sudo usermod -aG docker $USER`: Añade el usuario actual al grupo Docker para ejecutar comandos Docker sin `sudo`.
+   - `newgrp docker`: Actualiza el grupo Docker sin necesidad de reiniciar la sesión.
+
+### Paso 2: Iniciar Minikube
+
+1. **Iniciar Minikube**
+
+   ```sh
+   minikube start --driver=docker
+   ```
+
+   Este comando inicia un clúster de Minikube utilizando Docker como driver.
 
 ### Paso 3: Añadir Configuración
 
@@ -297,9 +279,7 @@ ssh -i "your-key.pem" ec2-user@your-ec2-public-dns
 5. **Aplicar los servicios**
 
    ```sh
-   kubectl apply
-
- -f grafana-service.yaml
+   kubectl apply -f grafana-service.yaml
    kubectl apply -f prometheus-service.yaml
    ```
 
@@ -323,4 +303,6 @@ Estos comandos proporcionan las URLs para acceder a Grafana y Prometheus respect
 
 ## Conclusión
 
-Este README proporciona una guía paso a paso para desplegar un stack de monitoreo utilizando Prometheus y Grafana en un clúster de Kubernetes gestionado por Minikube. Siguiendo estas instrucciones, deberías poder configurar el entorno, construir y desplegar la solución completa, mejorando así la observabilidad de tu sistema.
+Este README proporciona una guía paso a paso para desplegar un stack de monitoreo
+
+ utilizando Prometheus y Grafana en un clúster de Kubernetes gestionado por Minikube. Siguiendo estas instrucciones, deberías poder configurar el entorno, construir y desplegar la solución completa, mejorando así la observabilidad de tu sistema.
