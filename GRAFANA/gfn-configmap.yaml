@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-provisioning
+data:
+  datasources.yaml: |
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        access: proxy
+        url: http://prometheus:9090
+  grafana.ini: |
+    [auth]
+    # Cambia las credenciales por las que quieras utilizar
+    admin_user = admin
+    admin_password = admin
