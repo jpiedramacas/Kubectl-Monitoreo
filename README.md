@@ -5,6 +5,7 @@ Este proyecto implementa un sistema de monitoreo utilizando Grafana y Prometheus
 ## Contenido del Proyecto
 
 ### Grafana
+[Explicacion del codigo](https://github.com/jpiedramacas/Kubectl-Monitoreo/blob/main/GRAFANA/code_explicacion.md)
 - **`gfn-configmap.yaml`**: Define un ConfigMap para Grafana, incluyendo configuraciones como dashboards y otras configuraciones de la aplicación.
 - **`gfn-deployment.yaml`**: Describe el Deployment de Grafana, especificando la imagen del contenedor, el número de réplicas y otras configuraciones del pod.
 - **`gfn-hpa.yaml`**: Configura el Horizontal Pod Autoscaler (HPA) para Grafana, permitiendo que Kubernetes ajuste automáticamente el número de réplicas del pod basado en la carga.
