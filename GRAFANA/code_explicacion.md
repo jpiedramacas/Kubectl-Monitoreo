@@ -4,7 +4,15 @@ Este documento detalla los archivos de configuración utilizados para desplegar 
 
 ## Archivos de Configuración
 
-### gfn-configmap.yaml
+1. **[gfn-configmap.yaml](#gfn-configmapyaml)**
+2. **[gfn-deployment.yaml](#gfn-deploymentyaml)**
+3. **[gfn-hpa.yaml](#gfn-hpayaml)**
+4. **[gfn-pv.yaml](#gfn-pvyaml)**
+5. **[gfn-pvc.yaml](#gfn-pvcyaml)**
+6. **[gfn-service.yaml](#gfn-serviceyaml)**
+7. **[datasources.yaml](#datasourcesyaml)**
+
+## gfn-configmap.yaml
 
 Este archivo define un ConfigMap para Grafana, que incluye configuraciones como las fuentes de datos y el archivo de configuración `grafana.ini`.
 
@@ -35,7 +43,7 @@ data:
   - `datasources.yaml`: Configura la fuente de datos de Grafana para conectarse a Prometheus.
   - `grafana.ini`: Contiene configuraciones adicionales, como las credenciales de administrador.
 
-### gfn-deployment.yaml
+## gfn-deployment.yaml
 
 Este archivo describe el Deployment de Grafana, especificando la imagen del contenedor, el número de réplicas y otras configuraciones del pod.
 
@@ -85,7 +93,7 @@ spec:
   - **volumeMounts**: Monta volúmenes en el contenedor.
   - **volumes**: Define los volúmenes que se utilizarán, incluyendo el PersistentVolumeClaim y el ConfigMap.
 
-### gfn-hpa.yaml
+## gfn-hpa.yaml
 
 Este archivo configura el Horizontal Pod Autoscaler (HPA) para Grafana, permitiendo que Kubernetes ajuste automáticamente el número de réplicas del pod basado en la carga.
 
@@ -112,7 +120,7 @@ spec:
   - **minReplicas** y **maxReplicas**: Define el rango de réplicas permitidas.
   - **targetCPUUtilizationPercentage**: Especifica el umbral de utilización de CPU para escalar.
 
-### gfn-pv.yaml
+## gfn-pv.yaml
 
 Este archivo define un PersistentVolume (PV) para Grafana, proporcionando almacenamiento persistente.
 
@@ -138,7 +146,7 @@ spec:
   - **accessModes**: Modo de acceso, `ReadWriteOnce`.
   - **hostPath**: Ruta en el host donde se almacenarán los datos.
 
-### gfn-pvc.yaml
+## gfn-pvc.yaml
 
 Este archivo describe un PersistentVolumeClaim (PVC) para Grafana, que solicita el almacenamiento definido por el PV.
 
@@ -162,7 +170,7 @@ spec:
   - **accessModes**: Modo de acceso, `ReadWriteOnce`.
   - **resources**: Solicitud de recursos, en este caso, 1Gi de almacenamiento.
 
-### gfn-service.yaml
+## gfn-service.yaml
 
 Este archivo configura el Service de Grafana, exponiendo el Deployment a través de una dirección IP dentro del clúster.
 
@@ -189,7 +197,7 @@ spec:
   - **ports**: Define el puerto que se expondrá y el puerto objetivo en el contenedor.
   - **type**: Tipo de servicio, `LoadBalancer`.
 
-### datasources.yaml
+## datasources.yaml
 
 Este archivo contiene la configuración para la fuente de datos de Grafana, especificando a Prometheus como la fuente de datos.
 
