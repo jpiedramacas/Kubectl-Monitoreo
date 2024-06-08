@@ -228,13 +228,6 @@ spec:
     grafana-5b5f6b7d7d-ztxnc    1/1     Running   0          1m
     ```
 
-    **Explicación:**
-    - `NAME`: Nombre de los pods.
-    - `READY`: Número de contenedores listos en el pod.
-    - `STATUS`: Estado del pod (Running, Pending, etc.).
-    - `RESTARTS`: Número de reinicios del pod.
-    - `AGE`: Tiempo desde que se creó el pod.
-
 3. Revisar los eventos del HPA para ver detalles del autoescalado:
     ```sh
     kubectl describe hpa grafana-hpa
