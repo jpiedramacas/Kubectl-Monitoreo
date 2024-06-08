@@ -12,6 +12,8 @@ Este README proporciona instrucciones detalladas para implementar Grafana en un 
 6. `gfn-hpa.yaml`
 7. `load-generator.yaml` (para prueba de autoescalado)
 
+[PASOS](#pasos-detallados-para-la-implementación)
+
 ## Descripción de Cada Archivo de Configuración
 
 ### 1. `gfn-pv.yaml`
