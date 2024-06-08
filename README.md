@@ -78,7 +78,7 @@ spec:
 - `spec`: Define las especificaciones del PVC, como el modo de acceso (`ReadWriteOnce`) y la cantidad de almacenamiento solicitada (`1Gi`).
 
 
-### 6. `gfn-hpa.yaml`
+### 3. `gfn-hpa.yaml`
 
 **Función:** Define el autoescalador horizontal que ajusta el número de réplicas de Grafana según la utilización de CPU.
 
@@ -112,7 +112,7 @@ spec:
   - `maxReplicas`: Número máximo de réplicas.
   - `targetCPUUtilizationPercentage`: Utilización objetivo de CPU para el autoescalado.
 
-### 7. `load-generator.yaml`
+### 4. `load-generator.yaml`
 
 **Función:** Pod utilizado para generar carga de trabajo en el despliegue de Grafana y probar el autoescalado.
 
