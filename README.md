@@ -6,11 +6,20 @@ Este README proporciona instrucciones detalladas para implementar Grafana en un 
 
 1. `gfn-pv.yaml`
 2. `gfn-pvc.yaml`
-3. `gfn-configmap.yaml`
-4. `gfn-deployment.yaml`
-5. `gfn-service.yaml`
-6. `gfn-hpa.yaml`
-7. `load-generator.yaml` (para prueba de autoescalado)
+3. `gfn-hpa.yaml`
+4. `load-generator.yaml` (para prueba de autoescalado)
+
+Para gestionar datos persistentes y configurar plantillas de escalado automático (autoscaling) en Kubernetes, necesitas seleccionar los archivos que manejan el almacenamiento persistente y la configuración del autoscaling. Aquí tienes los archivos relevantes:
+
+1. **Datos persistentes:**
+   - `gfn-pv.yaml`: PersistentVolume (PV) define un volumen de almacenamiento que puede ser utilizado por los contenedores.
+   - `gfn-pvc.yaml`: PersistentVolumeClaim (PVC) es una solicitud de almacenamiento persistente que se vincula a un PV.
+
+2. **Autoscaling templates:**
+   - `gfn-hpa.yaml`: HorizontalPodAutoscaler (HPA) define la configuración para el escalado automático de los pods basándose en las métricas especificadas.
+
+
+Los otros archivos (`gfn-configmap.yaml`, `gfn-deployment.yaml`, `gfn-service.yaml`, `load-generator.yaml`) no son directamente necesarios para el almacenamiento persistente ni para el autoscaling, aunque pueden ser importantes para otras configuraciones y despliegues de tu aplicación en Kubernetes.
 
 **En caso de ya tener todos los archivos de configuracion, estos son los pasos para la implementación:**
 [PASOS](#pasos-detallados-para-la-implementación)
@@ -68,130 +77,6 @@ spec:
 - `metadata`: Incluye el nombre del PVC.
 - `spec`: Define las especificaciones del PVC, como el modo de acceso (`ReadWriteOnce`) y la cantidad de almacenamiento solicitada (`1Gi`).
 
-### 3. `gfn-configmap.yaml`
-
-**Función:** ConfigMap que proporciona configuración inicial y credenciales para Grafana.
-
-**Contenido:**
-
-```yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: grafana-provisioning
-data:
-  datasources.yaml: |
-    apiVersion: 1
-    datasources:
-      - name: Prometheus
-        type: prometheus
-        access: proxy
-        url: http://prometheus:9090
-  grafana.ini: |
-    [auth]
-    admin_user = admin
-    admin_password = admin
-```
-
-**Explicación:**
-- `apiVersion: v1`: Especifica la versión de la API.
-- `kind: ConfigMap`: Define el tipo de recurso.
-- `metadata`: Incluye el nombre del ConfigMap.
-- `data`: Contiene la configuración de datasources para Grafana y las credenciales administrativas en formato YAML.
-
-### 4. `gfn-deployment.yaml`
-
-**Función:** Define el despliegue de Grafana, utilizando el PV y PVC para almacenamiento persistente.
-
-**Contenido:**
-
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: grafana
-  labels:
-    app: grafana
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: grafana
-  template:
-    metadata:
-      labels:
-        app: grafana
-    spec:
-      containers:
-      - name: grafana
-        image: grafana/grafana:latest
-        ports:
-        - containerPort: 3000
-        volumeMounts:
-        - name: grafana-data
-          mountPath: /var/lib/grafana
-        - name: grafana-provisioning
-          mountPath: /etc/grafana/provisioning
-      volumes:
-      - name: grafana-data
-        persistentVolumeClaim:
-          claimName: grafana-pvc
-      - name: grafana-provisioning
-        configMap:
-          name: grafana-provisioning
-```
-
-**Explicación:**
-- `apiVersion: apps/v1`: Especifica la versión de la API.
-- `kind: Deployment`: Define el tipo de recurso.
-- `metadata`: Incluye el nombre y etiquetas del Deployment.
-- `spec`: Define las especificaciones del Deployment.
-  - `replicas: 1`: Indica que se creará una réplica del pod.
-  - `selector`: Define cómo seleccionar los pods para este Deployment.
-  - `template`: Define el template del pod.
-    - `metadata`: Incluye las etiquetas del pod.
-    - `spec`: Define las especificaciones del contenedor.
-      - `containers`: Lista de contenedores en el pod.
-        - `name`: Nombre del contenedor.
-        - `image`: Imagen del contenedor.
-        - `ports`: Puerto en el que escucha el contenedor.
-        - `volumeMounts`: Montaje de volúmenes en el contenedor.
-      - `volumes`: Lista de volúmenes utilizados por el pod.
-        - `persistentVolumeClaim`: Reclama el PVC creado anteriormente.
-        - `configMap`: Incluye la configuración de Grafana.
-
-### 5. `gfn-service.yaml`
-
-**Función:** Define un servicio que expone Grafana a través de un LoadBalancer.
-
-**Contenido:**
-
-```yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: grafana
-spec:
-  selector:
-    app: grafana
-  ports:
-  - protocol: TCP
-    port: 3000
-    targetPort: 3000
-  type: LoadBalancer
-```
-
-**Explicación:**
-- `apiVersion: v1`: Especifica la versión de la API.
-- `kind: Service`: Define el tipo de recurso.
-- `metadata`: Incluye el nombre del Service.
-- `spec`: Define las especificaciones del Service.
-  - `selector`: Selecciona los pods que coinciden con la etiqueta `app: grafana`.
-  - `ports`: Configura los puertos.
-    - `protocol: TCP`: Protocolo TCP.
-    - `port: 3000`: Puerto expuesto por el Service.
-    - `targetPort: 3000`: Puerto en el pod al que se redirige el tráfico.
-  - `type: LoadBalancer`: Exposición del servicio a través de un LoadBalancer.
 
 ### 6. `gfn-hpa.yaml`
 
