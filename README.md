@@ -1,4 +1,4 @@
-# README para Implementación de Grafana con Autoescalado y Persistencia en Kubernetes
+# Implementación de Grafana con Autoescalado y Persistencia en Kubernetes
 
 Este README proporciona instrucciones detalladas para implementar Grafana en un clúster de Kubernetes con persistencia de datos y autoescalado habilitado. Cada paso incluye los comandos y explicaciones necesarias para configurar y verificar que el despliegue funcione correctamente.
 
